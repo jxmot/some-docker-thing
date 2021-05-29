@@ -69,7 +69,8 @@
 */
 module.exports = {
     sensors: {
-/*
+/* Canned sensor rules, used in dev&debug
+
         '{87c89411-55f7-4cab-9b54-6d0895b2bafc}': {
             enable:true,
             checks: {

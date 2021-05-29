@@ -20,6 +20,7 @@ module.exports = (function(apiev, log)  {
     const notify = require('./notify.js')(log);
 
     /*
+        Handle incoming sensor data...
     */
     api_evts.on('SENSORDATA', (sensdat) => {
         consolelog(`${scriptname} - SENSORDATA = ${JSON.stringify(sensdat)}`);
@@ -66,6 +67,7 @@ module.exports = (function(apiev, log)  {
     });
 
     /*
+        Handle incoming rules...
     */
     api_evts.on('SENSORRULE', (sensrule) => {
         consolelog(`${scriptname} - SENSORRULE = ${JSON.stringify(sensrule)}`);
