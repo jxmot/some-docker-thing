@@ -17,6 +17,8 @@ module.exports = (function(apiev, log)  {
     // not 'const, because we can modfiy sensor rules
     let rules = require('./rules.js');
 
+    const notify = require('./notify.js')(log);
+
     /*
     */
     api_evts.on('SENSORDATA', (sensdat) => {
@@ -37,7 +39,7 @@ module.exports = (function(apiev, log)  {
                     if(sensdat.value > (trigger + delta)) {
                         consolelog(`${scriptname} - ${sensdat.id}: ${sensdat.value} is "${rule}" than ${(trigger + delta)}`);
 // ToDO: check length of msg before sending, < 160!
-//                        notify.send(`${sensdat.id} - ${sensdat.value} "${rule}" ${(trigger + delta)}`);
+                        notify.send(`${sensdat.id} - ${sensdat.value} "${rule}" ${(trigger + delta)}`);
                     } else consolelog(`${scriptname} - ${sensdat.id}: ${sensdat.value} is NOT "${rule}"`);
                     break;
 
