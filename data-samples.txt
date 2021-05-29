@@ -1,3 +1,4 @@
+
 10 GUIDs for testing :
 
 {87c89411-55f7-4cab-9b54-6d0895b2bafc}
@@ -13,23 +14,16 @@
 
 Test data to POST:
 
-{"id": "{87c89411-55f7-4cab-9b54-6d0895b2bafc}","value": 89,"unit": "fahrenheit"}
-{"id": "{87c89411-55f7-4cab-9b54-6d0895b2bafc}","value": 33,"unit": "celsius"}
+Rule Data - 
+{"id": "{87c89411-55f7-4cab-9b54-6d0895b2bafc}","enable": true,"trigger": 70.6,"unit": "fahrenheit","delta": 0.0,"check": "GT"}
+{"id": "{87c89411-55f7-4cab-9b54-6d0895b2bafc}","enable": true,"trigger": 21.4,"unit": "celsius","delta": 0.0,"check": "GT"}
 
-A sample rule for the sensor above, both will trigger it:
 
-'{87c89411-55f7-4cab-9b54-6d0895b2bafc}': {
-    enable:true,
-    checks: {
-        'fahrenheit': {
-            trigger:90.0,
-            delta:0.0,
-            check:'GLT'
-        },
-        'celsius': {
-            trigger:32.2,
-            delta:0.0,
-            check:'GLT'
-        }
-    }
-}
+Sensor Data - 
+{"id": "{87c89411-55f7-4cab-9b54-6d0895b2bafc}","value": 72,"unit": "fahrenheit"}
+{"id": "{87c89411-55f7-4cab-9b54-6d0895b2bafc}","value": 22.2,"unit": "celsius"}
+
+{"id": "{87c89411-55f7-4cab-9b54-6d0895b2bafc}","value": 65,"unit": "fahrenheit"}
+{"id": "{87c89411-55f7-4cab-9b54-6d0895b2bafc}","value": 18.3,"unit": "celsius"}
+
+
