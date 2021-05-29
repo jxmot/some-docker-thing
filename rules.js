@@ -59,7 +59,7 @@
     Typically the values would arrive from some other 
     "source". During that process the trigger value 
     could be entered in either "fahrenheit" or "celsius"
-    and the opposite would be calculated and saved in the
+    and the opposite would be calculated and save in the
     appropriate place.
 
     The "delta" is optional. Just leave it a 0.0 if you 
@@ -69,6 +69,7 @@
 */
 module.exports = {
     sensors: {
+/*
         '{87c89411-55f7-4cab-9b54-6d0895b2bafc}': {
             enable:true,
             checks: {
@@ -219,5 +220,6 @@ module.exports = {
                 }
             }
         }
+*/
     }
 };
