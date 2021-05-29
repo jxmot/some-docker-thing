@@ -8,7 +8,7 @@ A node application with the following characteristics:
 
 * The "Rule Engine REST API" is an endpoint that accepts POST requests containing data used for updating "rules". 
 * A second endpoint is provided for simulating sensor data used in testing the "rules".
-* Sensors are known to this application by their ID. This ID takes the form of a GUID string.
+* Sensors are identified by their ID. This ID takes the form of a GUID string. Rules are associated with sendors via the same ID.
 * When a rule is triggered a notification is sent immediately. The service used for sending them is Twilio. 
 
 **NOTE:** Regarding Twilio, you will need your own API key from them to run this application. 
@@ -24,7 +24,21 @@ The next part was the rule API. It utilizes a data structure similar to what was
 
 After the rules were working the "Rules API" was added and the canned rules were removed. The creation of rules was tested, and sensor data was successfully checked against the added rules.
 
+Once the rules API and sensor rule tests were working I added the Twilio notification module.
 
+## Source Files
+
+Source Code :
+* `index.js` : 
+* `sensorapi.js` :
+* `rulesapi.js` : 
+* `sensorrules.js` :
+  * `rules.js` :
+* `notify.js` :
+
+Configuration Data :
+* `cfg.js` :
+* `notifycfg.js` : 
 
 # Running
 
