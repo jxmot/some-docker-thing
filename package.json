@@ -4,6 +4,7 @@
   "description": "AKA \"Rule Engine REST API\".",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,5 +19,8 @@
   "homepage": "https://github.com/jxmot/some-docker-thing#readme",
   "dependencies": {
     "twilio": "^3.63.0"
+  },
+  "engines": {
+    "node": ">=12.16.1"
   }
 }
