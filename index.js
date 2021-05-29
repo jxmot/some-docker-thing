@@ -35,5 +35,9 @@ function consolelog(text) {
 const sensrules = require('./sensorrules.js')(api_evts,consolelog);
 // the server that listens to sensors...
 const sensapi = require('./sensorapi.js')(api_evts,cfg.sensport,consolelog);
-// start listening... (rules will be processed on incoming sensor data)
+// start listening... (rules will be processed 
+// on incoming sensor data)
 sensapi.start();
+// the rules API, creates/updates existing rules
+const ruleapi = require('./rulesapi.js')(api_evts,cfg.ruleport,consolelog);
+ruleapi.start();
