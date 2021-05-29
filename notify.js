@@ -15,7 +15,7 @@ module.exports = (function(log)  {
 
     notify.send = function(message) {
         consolelog(`${scriptname} - notifying msg = ${message} size = ${message.length}`);
-        if(message.length < cfg.maxlen) {
+        if(message.length <= cfg.maxlen) {
             consolelog(`${scriptname} - sending to ${cfg.phto}`);
             client.messages
             .create({

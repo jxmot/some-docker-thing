@@ -29,7 +29,6 @@ module.exports = (function(apiev, log)  {
         // check...
         if(rules.sensors[sensdat.id] && rules.sensors[sensdat.id].enable === true) {
             consolelog(`${scriptname} - ${sensdat.id}: ${JSON.stringify(rules.sensors[sensdat.id].checks[sensdat.unit])}`);
-
             // if a rule matches then send a notification...
             const rule = rules.sensors[sensdat.id].checks[sensdat.unit].check;
             const trigger = rules.sensors[sensdat.id].checks[sensdat.unit].trigger;
@@ -39,7 +38,6 @@ module.exports = (function(apiev, log)  {
                 case 'GT':
                     if(sensdat.value > (trigger + delta)) {
                         consolelog(`${scriptname} - ${sensdat.id}: ${sensdat.value} is "${rule}" than ${(trigger + delta)}`);
-// ToDO: check length of msg before sending, < 160!
                         notify.send(`${sensdat.id} - ${sensdat.value} "${rule}" ${(trigger + delta)}`);
                     } else consolelog(`${scriptname} - ${sensdat.id}: ${sensdat.value} is NOT "${rule}"`);
                     break;
