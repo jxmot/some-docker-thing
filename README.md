@@ -43,9 +43,6 @@ module.exports = {
     debug: false
 };
 ```
-
-
-
 ### `notifycfg.js`
 
 This file contains the necessary Twilio settings, edit it and add your own Twilio information: 
@@ -69,6 +66,8 @@ module.exports = {
 ```
 
 Your Twilio account will provide `accountSid`, `authToken` and `phfrom` (the phone number where the Twilio messages come from).
+
+Edit `notifycfg.js`, add your account information and save the file as **`_notifycfg.js`**. The underscore (`_`) will hide the file from GitHub when using the `.gitignore` file found in this repository. The helps prevent accidental check-ins of this file.
 
 ## Command Line
 
@@ -101,13 +100,18 @@ sensorrules.js - {87c89411-55f7-4cab-9b54-6d0895b2bafc}: 72.3 is "GT" than 70.6
 **Rule Trigger SMS Notification:**
 ```
 notify.js - notifying msg = {87c89411-55f7-4cab-9b54-6d0895b2bafc} - 72.3 "GT" 70.6 size = 55
-notify.js - sending to +17737899280
-notify.js - queued SM3da7c64d1222417a9ab4c3ea8245821e
+notify.js - sending to +17735551212
+notify.js - queued SM3da7cz4d1222327a9ab4c3ea8657821f
 ```
 
 ## Docker
 
 
+## Sending Rules and Data
+
+I recommend a utility lie *Postman*. It makes it extremely easy to send POST API calls to the application. 
+
+The file `data-samples.txt` contains GUID strings and sample JSON data for use in Postman or some other tool.
 
 # Information Resources Used
 
