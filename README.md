@@ -85,7 +85,7 @@ module.exports = {
 
 Your Twilio account will provide `accountSid`, `authToken` and `phfrom` (the phone number where the Twilio messages come from).
 
-Edit `notifycfg.js`, add your account information and save the file as **`_notifycfg.js`**. The underscore (`_`) will hide the file from GitHub when using the `.gitignore` file found in this repository. The helps prevent accidental check-ins of this file.
+Edit `notifycfg.js`, add your account information and save the file as **`_notifycfg.js`**. The underscore (`_`) will hide the file from GitHub when using the `.gitignore` file found in this repository. This helps prevent accidental check-ins of this file and its sensitive information.
 
 ## Command Line
 
@@ -153,4 +153,3 @@ The file `data-samples.txt` contains GUID strings and sample JSON data for use i
 * <https://www.twilio.com/docs/sms/quickstart/node>
 * <https://www.docker.com/101-tutorial>
 * <https://nodejs.org/en/docs/guides/nodejs-docker-webapp/>
-* 
