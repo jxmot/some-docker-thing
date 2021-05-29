@@ -13,6 +13,10 @@ A node application with the following characteristics:
 
 **NOTE:** Regarding Twilio, you will need your own API key from them to run this application. 
 
+## Development Environment
+
+OS: Windows 10 Pro 64bit
+
 # Design Overview
 
 A specification was used as the means to drive the development of this application. From that the initial parts were:
@@ -20,31 +24,31 @@ A specification was used as the means to drive the development of this applicati
 * Sensor rule data structure(s) - initially filled with "canned" rules for testing, removed later.
 * Sensor data reception and rule checking - utilizes events to initiate rule tests and create/update rules.
 
-The next part was the rule API. It utilizes a data structure similar to what was in the "canned" rules. The difference is that the API data only needs to specify one `unit` or the other. 
+The next part was the rule API. It utilizes a data structure similar to what was in the "canned" rules. The difference is that the API data only needs to specify one `unit` or the other. The code will calculate and populate the other `unit` data.
 
 After the rules were working the "Rules API" was added and the canned rules were removed. The creation of rules was tested, and sensor data was successfully checked against the added rules.
 
-Once the rules API and sensor rule tests were working I added the Twilio notification module.
+Once the rules API and sensor rule tests were working I added the Twilio notification module. 
 
 ## Source Files
 
-Source Code :
-* `index.js` : 
-* `sensorapi.js` :
-* `rulesapi.js` : 
-* `sensorrules.js` :
-  * `rules.js` :
-* `notify.js` :
+Source Code : 
+* `index.js` : Application initialize and run. Run-time configuration is in `cfg.js`.
+  * `sensorapi.js` : Endpoint for sensors, emits a `SENSORDATA` event when valid sensor data arrives.
+  * `rulesapi.js` : Endpoint for POSTing rules, emits a `SENSORRULE` event when a rule arrives.
+  * `sensorrules.js` : Event handlers for `SENSORDATA` and `SENSORRULE`.
+    * `SENSORDATA` event : Sensor data is passed with the event, its ID is used to access any associated rule found in `rules.js`.
+    * `SENSORRULE` event : Rule data is passed with the event, the sensor ID is used to access the rule list in `rules.js` and either create or overwrite in the list.
+    * `rules.js` : Container for rules.
+    * `notify.js` : The function `notify.send()` is called from `sensorrules.js`if a rule is triggered while handling the `SENSORDATA` event. Run-time configuration is in `_notifycfg.js`.
 
-Configuration Data :
-* `cfg.js` :
-* `notifycfg.js` : 
-
-# Running
+# Running the Application
 
 ## Configuration
 
 ### `cfg.js`
+
+This file contains the port numbers for the API endpoints and the option to enable/disable console output.
 
 ```
 'use strict';
@@ -118,17 +122,33 @@ notify.js - sending to +17735551212
 notify.js - queued SM3da7cz4d1222327a9ab4c3ea8657821f
 ```
 
-## Docker
+### Docker
 
+**Build**
+`docker build . -t [YOUR_USER_NAME]/some-docker-thing`
+
+**Run** (*in the foreground*)
+`docker run -p 18080:8080 -p 11234:1234 [YOUR_USER_NAME]/some-docker-thing`
+
+NOTE: If `cfg.js:debug` is `true` then you will see output on the console similar to what was decribed above.
+
+## Troubleshooting Notes
+
+Initially when I was running the Docker container I was unable to reach the ports. I wasn't sure if it was listening or if something prevented it. I was able to use the Windows 10 *Powershell* and run this command: `Get-NetTCPConnection -State Listen`. It will show all of the ports that are currently in "listen" mode. And I was able to determine that the ports were not open. To fix the issue I had to correct my `Dockerfile` and use the correct command.
+
+I also had "Docker Desktop" running so I could see the images I was building. Along the way I *thought* I was cleaning up by removing previous ones. But that didn't appear to be what actually happened. 
+
+At one point I noticed a few things shortly after it was working. First, ports were still open even though the container was supposed to be stopped and *removed*. Second, there was a process running on Win10 called `Vmmem` and it was using almost a gig of memory. So I closed "Docker Desktop", it was still there.
+
+I restarted "Docker Desktop" and now there were a number of images I *had built* and some were also running. The strange thing is that they were not visible before stopped and restarted "Docker Desktop".
 
 ## Sending Rules and Data
 
-I recommend a utility lie *Postman*. It makes it extremely easy to send POST API calls to the application. 
+I recommend a utility like *Postman*. It makes it extremely easy to send POST API calls to the application. 
 
 The file `data-samples.txt` contains GUID strings and sample JSON data for use in Postman or some other tool.
 
 # Information Resources Used
-
 
 * <https://www.twilio.com/docs/sms/quickstart/node>
 * <https://www.docker.com/101-tutorial>
