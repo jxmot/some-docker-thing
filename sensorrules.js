@@ -47,12 +47,14 @@ module.exports = (function(apiev, log)  {
                 case 'LT':
                     if(sensdat.value < (trigger - delta)) {
                         consolelog(`${scriptname} - ${sensdat.id}: ${sensdat.value} is "${rule}" than ${(trigger + delta)}`);
+                        notify.send(`${sensdat.id} - ${sensdat.value} "${rule}" ${(trigger + delta)}`);
                     } else consolelog(`${scriptname} - ${sensdat.id}: ${sensdat.value} is NOT "${rule}"`);
                     break;
 
                 case 'GLT':
                     if((sensdat.value < (trigger - delta)) || (sensdat.value > (trigger + delta))) {
                         consolelog(`${scriptname} - ${sensdat.id}: ${sensdat.value} is "${rule}" than ${(trigger + delta)}`);
+                        notify.send(`${sensdat.id} - ${sensdat.value} "${rule}" ${(trigger + delta)}`);
                     } else consolelog(`${scriptname} - ${sensdat.id}: ${sensdat.value} is NOT "${rule}"`);
                     break;
 
