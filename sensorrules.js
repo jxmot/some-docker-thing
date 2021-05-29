@@ -17,6 +17,7 @@ module.exports = (function(apiev, log)  {
     // not 'const, because we can modfiy sensor rules
     let rules = require('./rules.js');
 
+    // SMS notification when a rule is triggered
     const notify = require('./notify.js')(log);
 
     /*
