@@ -153,3 +153,7 @@ The file `data-samples.txt` contains GUID strings and sample JSON data for use i
 * <https://www.twilio.com/docs/sms/quickstart/node>
 * <https://www.docker.com/101-tutorial>
 * <https://nodejs.org/en/docs/guides/nodejs-docker-webapp/>
+
+## Other 
+
+* <https://www.guidgenerator.com/> - used for creating the GUIDs used here.
