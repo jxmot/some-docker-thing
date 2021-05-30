@@ -87,7 +87,33 @@ Your Twilio account will provide `accountSid`, `authToken` and `phfrom` (the pho
 
 Edit `notifycfg.js`, add your account information and save the file as **`_notifycfg.js`**. The underscore (`_`) will hide the file from GitHub when using the `.gitignore` file found in this repository. This helps prevent accidental check-ins of this file and its sensitive information.
 
-## Command Line
+## POST/GET Operations
+
+There are only two allowed HTTP requests, POST and GET. Any others will get a `405` response. 
+
+The endpoints will respond to the following - 
+
+* **`POST`** - Used for writing sensor data and rules. The POST body must contain JSON text formatted data. Port numbers are used for distinguishing between sensor data and rule data
+
+Examples:
+Sensor Data - `POST http://server:8080 body:{"id": "{87c89411-55f7-4cab-9b54-6d0895b2bafc}","value": 72.3,"unit": "fahrenheit"}`
+
+Rule Data - `POST http://server:1234 body:{"id": "{87c89411-55f7-4cab-9b54-6d0895b2bafc}","enable": true,"trigger": 70.6,"unit": "fahrenheit","delta": 0.0,"check": "GT"}`
+
+When successful the server respones will be `200 OK`.
+
+* **`GET`** - Used for retrieving rules only. The response will be determined by the presence of the rule, and the correctness of the request.
+
+Example:
+Rule Data - `GET http://server:1234?rule={87c89411-55f7-4cab-9b54-6d0895b2bafc}`
+
+If the rule exists the server will respond with `200` and return the rule formatted as JSON. The other possible responses are - 
+
+* `204` - rule was not found
+* `400` - bad GET parameter(s)
+* `405` - invalid HTTP method
+
+## Command Line Output
 
 When ran from the command line with `node ./index.js` and `cfg.js:debug` is `true` then the following is an example of the output sent to the console:
 
@@ -102,6 +128,21 @@ rulesapi.js - Server is listening on PORT: 8080
 rulesapi.js - body : {"id": "{87c89411-55f7-4cab-9b54-6d0895b2bafc}","enable": true,"trigger": 70.6,"unit": "fahrenheit","delta": 0.0,"check": "GT"}
 sensorrules.js - SENSORRULE = {"id":"{87c89411-55f7-4cab-9b54-6d0895b2bafc}","enable":true,"trigger":70.6,"unit":"fahrenheit","delta":0,"check":"GT"}
 sensorrules.js - rule completed for {87c89411-55f7-4cab-9b54-6d0895b2bafc}
+```
+
+**Read a Rule via the API:**
+This will be seen when a rule is requested via GET:
+
+If the rule is found - 
+```
+sensorrules.js - SENSORRULE = "{87c89411-55f7-4cab-9b54-6d0895b2bafc}"
+rulesapi.js - rule read response: {"enable":true,"checks":{"fahrenheit":{"check":"GT","trigger":70.6,"delta":0},"celsius":{"trigger":21.4,"check":"GT","delta":0}}}
+```
+
+If the rule does not exist - 
+```
+sensorrules.js - SENSORRULE = "{87c89411-doo-4cab-9b54-6d0895b2bafc}"
+rulesapi.js - rule read response: not found
 ```
 
 **Write Sensor Data via the API:**
@@ -142,7 +183,7 @@ At one point I noticed a few things shortly after it was working. First, ports w
 
 I restarted "Docker Desktop" and now there were a number of images I *had built* and some were also running. The strange thing is that they were not visible before stopped and restarted "Docker Desktop".
 
-## Sending Rules and Data
+## Sending & Requesting Rules and Data
 
 I recommend a utility like *Postman*. It makes it extremely easy to send POST API calls to the application. 
 
