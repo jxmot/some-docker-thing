@@ -14,7 +14,7 @@ module.exports = (function(log)  {
     const client = new Twilio(cfg.accountSid, cfg.authToken);
 
     notify.send = function(message) {
-        consolelog(`${scriptname} - notifying msg = ${message} size = ${message.length} NOSMS = ${NOSMS}`);
+        consolelog(`${scriptname} - notifying msg = ${message} size = ${message.length} nosms = ${cfg.nosms}`);
         // for dev & debug SMS can be disabled
         if(cfg.nosms) {
             consolelog(`${scriptname} - SMS tranmission is disabled`);
