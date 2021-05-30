@@ -79,13 +79,18 @@ module.exports = {
     maxlen: 150,
     phfrom: '',
     // all messages go to one number
-    phto: ''
+    phto: '',
+    // for dev & debug, disables the SMS send
+    nosms: false
+
 };
 ```
 
 Your Twilio account will provide `accountSid`, `authToken` and `phfrom` (the phone number where the Twilio messages come from).
 
 Edit `notifycfg.js`, add your account information and save the file as **`_notifycfg.js`**. The underscore (`_`) will hide the file from GitHub when using the `.gitignore` file found in this repository. This helps prevent accidental check-ins of this file and its sensitive information.
+
+It is possible to disable SMS transmission by setting **`nosms`** to `true`.
 
 ## POST/GET Operations
 
@@ -175,7 +180,7 @@ NOTE: If `cfg.js:debug` is `true` then you will see output on the console simila
 
 ## Troubleshooting Notes
 
-Initially when I was running the Docker container I was unable to reach the ports. I wasn't sure if it was listening or if something prevented it. I was able to use the Windows 10 *Powershell* and run this command: `Get-NetTCPConnection -State Listen`. It will show all of the ports that are currently in "listen" mode. And I was able to determine that the ports were not open. To fix the issue I had to correct my `Dockerfile` and use the correct command.
+Initially when I was running the Docker container I was unable to reach the ports. I wasn't sure if it was listening or if something prevented it. I was able to use the Windows 10 *Powershell* and run this command: `Get-NetTCPConnection -State Listen`. It  shows all of the ports that are currently in "listen" mode. And I was able to determine that the ports were not open. To fix the issue I had to correct my `Dockerfile` and use the correct run command.
 
 I also had "Docker Desktop" running so I could see the images I was building. Along the way I *thought* I was cleaning up by removing previous ones. But that didn't appear to be what actually happened. 
 
