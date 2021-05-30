@@ -21,6 +21,36 @@ module.exports = (function(apiev, log)  {
     const notify = require('./notify.js')(log);
 
     /*
+        Test rules against sensor data
+
+        Returns:
+            true - the rule was triggered
+            false - the rule was not triggered
+            undefined - the rule is unknown
+    */
+    function testRule(sensdat, rule, trigger, delta) {
+        let result;
+        switch(rule) {
+            case 'GT':
+                result = (sensdat.value > (trigger + delta));
+                break;
+
+            case 'LT':
+                result = (sensdat.value < (trigger - delta));
+                break;
+
+            case 'GLT':
+                result = ((sensdat.value < (trigger - delta)) || (sensdat.value > (trigger + delta)));
+                break;
+
+            default:
+                consolelog(`${scriptname} - ${sensdat.id} unknown rule: ${rule}`);
+                break;
+        }
+        return result;
+    };
+
+    /*
         Handle incoming sensor data...
     */
     api_evts.on('SENSORDATA', (sensdat) => {
@@ -34,32 +64,13 @@ module.exports = (function(apiev, log)  {
             const rule = rules.sensors[sensdat.id].checks[sensdat.unit].check;
             const trigger = rules.sensors[sensdat.id].checks[sensdat.unit].trigger;
             const delta = rules.sensors[sensdat.id].checks[sensdat.unit].delta;
-
-            switch(rule) {
-                case 'GT':
-                    if(sensdat.value > (trigger + delta)) {
-                        consolelog(`${scriptname} - ${sensdat.id}: ${sensdat.value} is "${rule}" than ${(trigger + delta)}`);
-                        notify.send(`${sensdat.id} - ${sensdat.value} "${rule}" ${(trigger + delta)}`);
-                    } else consolelog(`${scriptname} - ${sensdat.id}: ${sensdat.value} is NOT "${rule}"`);
-                    break;
-
-                case 'LT':
-                    if(sensdat.value < (trigger - delta)) {
-                        consolelog(`${scriptname} - ${sensdat.id}: ${sensdat.value} is "${rule}" than ${(trigger + delta)}`);
-                        notify.send(`${sensdat.id} - ${sensdat.value} "${rule}" ${(trigger + delta)}`);
-                    } else consolelog(`${scriptname} - ${sensdat.id}: ${sensdat.value} is NOT "${rule}"`);
-                    break;
-
-                case 'GLT':
-                    if((sensdat.value < (trigger - delta)) || (sensdat.value > (trigger + delta))) {
-                        consolelog(`${scriptname} - ${sensdat.id}: ${sensdat.value} is "${rule}" than ${(trigger + delta)}`);
-                        notify.send(`${sensdat.id} - ${sensdat.value} "${rule}" ${(trigger + delta)}`);
-                    } else consolelog(`${scriptname} - ${sensdat.id}: ${sensdat.value} is NOT "${rule}"`);
-                    break;
-
-                default:
-                    consolelog(`${scriptname} - ${sensdat.id} unknown rule: ${rule}`);
-                    break;
+            let tmp = testRule(sensdat, rule, trigger, delta);
+            if(tmp) {
+                consolelog(`${scriptname} - ${sensdat.id}: ${sensdat.value} is "${rule}" than ${(trigger + delta)}`);
+                notify.send(`${sensdat.id} - ${sensdat.value} "${rule}" ${(trigger + delta)}`);
+            } else {
+                if(tmp === false) consolelog(`${scriptname} - ${sensdat.id}: ${sensdat.value} is NOT "${rule}"`);
+                else consolelog(`${scriptname} - ${sensdat.id}: "${rule}" is unknown`);
             }
         } else {
             let state = (rules.sensors[sensdat.id] ? 'disabled' : 'unknown');
