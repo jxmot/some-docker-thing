@@ -10,6 +10,8 @@ A node application with the following characteristics:
 * A second endpoint is provided for simulating sensor data used in testing the "rules".
 * Sensors are identified by their ID. This ID takes the form of a GUID string. Rules are associated with sendors via the same ID.
 * When a rule is triggered a notification is sent immediately. The service used for sending them is Twilio. 
+* Rules can be create/overwritten via an API.
+* When a rule is sent via the API it and any pre-existing rules are saved to a file. Upon application start-up that file is read.
 
 **NOTE:** Regarding Twilio, you will need your own API key from them to run this application. 
 
