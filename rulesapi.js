@@ -88,7 +88,13 @@ module.exports = (function(apiev, apiport, log)  {
                 // but it works as expected. and by passing 'res'
                 // to the event we'll be sure to have the one 
                 // that's in context when the response is sent.
-                api_evts.emit('SENSORRULE', ruleid, readResp, res);
+                if(ruleid) {
+                    api_evts.emit('SENSORRULE', ruleid, readResp, res);
+                } else {
+                    consolelog(`${scriptname} - missing params in GET`);
+                    res.writeHead(400);
+                    res.end();
+                }
             } else {
                 // POST and GET only!
                 res.writeHead(405);
