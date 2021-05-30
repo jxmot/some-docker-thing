@@ -70,37 +70,48 @@ module.exports = (function(apiev, log)  {
     /*
         Handle incoming rules...
     */
-    api_evts.on('SENSORRULE', (sensrule) => {
+    api_evts.on('SENSORRULE', (sensrule, respfunc = null, res = null) => {
         consolelog(`${scriptname} - SENSORRULE = ${JSON.stringify(sensrule)}`);
-
-        // create objects and overwrite any pre-existing rule
-        rules.sensors[sensrule.id] = Object.create(null);
-
-        if(!sensrule.enable) {
-            // disable rules for the specified sensor
-            rules.sensors[sensrule.id].enable = false;
-            // all other rule data is ignored
+        // the args 
+        if(respfunc && res) {
+            // a rule "read" has been requested,
+            // find it and send it back via respfunc()
+            if(rules.sensors[sensrule]) {
+                respfunc(JSON.stringify(rules.sensors[sensrule]), res);
+            } else {
+                // rule was not found...
+                respfunc(null, res);
+            }
         } else {
-            rules.sensors[sensrule.id].enable = true;
-            // create a rule check object
-            rules.sensors[sensrule.id].checks = Object.create(null);
-            // start with the specifed unit...
-            rules.sensors[sensrule.id].checks[sensrule.unit] = Object.create(null);
-            // then copy the rest of the rule data...
-            rules.sensors[sensrule.id].checks[sensrule.unit].check = sensrule.check;
-            rules.sensors[sensrule.id].checks[sensrule.unit].trigger = sensrule.trigger;
-            rules.sensors[sensrule.id].checks[sensrule.unit].delta = sensrule.delta;
-            // adjust the other unit trigger value...
-            let unit = (sensrule.unit === 'fahrenheit' ? 'celsius' : 'fahrenheit');
-            let trigger = (unit === 'fahrenheit' ? ((sensrule.trigger * 1.8) + 32) : ((sensrule.trigger - 32) * 0.55555555556));
-            rules.sensors[sensrule.id].checks[unit] = Object.create(null);
-            rules.sensors[sensrule.id].checks[unit].trigger = Number(trigger.toFixed(1));
-            // the others will be the same, no conversion 
-            // is done for the delta value
-            rules.sensors[sensrule.id].checks[unit].check = sensrule.check;
-            rules.sensors[sensrule.id].checks[unit].delta = sensrule.delta;
-
-            consolelog(`${scriptname} - rule completed for ${sensrule.id}`);
+            // create objects and overwrite any pre-existing rule
+            rules.sensors[sensrule.id] = Object.create(null);
+    
+            if(!sensrule.enable) {
+                // disable rules for the specified sensor
+                rules.sensors[sensrule.id].enable = false;
+                // all other rule data is ignored
+            } else {
+                rules.sensors[sensrule.id].enable = true;
+                // create a rule check object
+                rules.sensors[sensrule.id].checks = Object.create(null);
+                // start with the specifed unit...
+                rules.sensors[sensrule.id].checks[sensrule.unit] = Object.create(null);
+                // then copy the rest of the rule data...
+                rules.sensors[sensrule.id].checks[sensrule.unit].check = sensrule.check;
+                rules.sensors[sensrule.id].checks[sensrule.unit].trigger = sensrule.trigger;
+                rules.sensors[sensrule.id].checks[sensrule.unit].delta = sensrule.delta;
+                // adjust the other unit trigger value...
+                let unit = (sensrule.unit === 'fahrenheit' ? 'celsius' : 'fahrenheit');
+                let trigger = (unit === 'fahrenheit' ? ((sensrule.trigger * 1.8) + 32) : ((sensrule.trigger - 32) * 0.55555555556));
+                rules.sensors[sensrule.id].checks[unit] = Object.create(null);
+                rules.sensors[sensrule.id].checks[unit].trigger = Number(trigger.toFixed(1));
+                // the others will be the same, no conversion 
+                // is done for the delta value
+                rules.sensors[sensrule.id].checks[unit].check = sensrule.check;
+                rules.sensors[sensrule.id].checks[unit].delta = sensrule.delta;
+    
+                consolelog(`${scriptname} - rule completed for ${sensrule.id}`);
+            }
         }
     });
     return sensorrules;

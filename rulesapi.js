@@ -12,6 +12,7 @@ module.exports = (function(apiev, apiport, log)  {
     const scriptname = path.basename(__filename);
 
     const http = require('http');
+    const url = require('url');
 
     let rulesapi = {
     };
@@ -24,6 +25,27 @@ module.exports = (function(apiev, apiport, log)  {
         server.listen(srv_port, function() {
             consolelog(`${scriptname} - Server is listening on PORT: ${srv_port}`);
         });
+    };
+
+    /*
+        Rule read response, called from the SENSORRULE
+        event handler in sensorrules.js
+    */
+    function readResp(rule = null, res = null) {
+        if(rule) {
+            consolelog(`${scriptname} - rule read response: ${rule}`);
+            res.writeHead(200);
+            res.end(rule);
+        } else {
+            if(res) {
+                consolelog(`${scriptname} - rule read response: not found`);
+                res.writeHead(204);
+                res.end();
+            } else {
+                consolelog(`${scriptname} - FATAL ERROR res is null`);
+                process.exit(1);
+            }
+        }
     };
 
     function handleRequest(req, res) {
@@ -54,11 +76,24 @@ module.exports = (function(apiev, apiport, log)  {
                 res.writeHead(200);
                 res.end();
                 // we've got sensor data, pass it on...
-                api_evts.emit('SENSORRULE', JSON.parse(body));
+                api_evts.emit('SENSORRULE', JSON.parse(body), null, null);
             });
         } else {
-            res.writeHead(405);
-            res.end();
+            // is this a rule read requst?
+            if(req.method === 'GET') {
+                let urlParts = url.parse(req.url, true);
+                let urlQuery = urlParts.query;
+                let ruleid = urlQuery.rule;
+                // ask for the rule, this might be non-standard
+                // but it works as expected. and by passing 'res'
+                // to the event we'll be sure to have the one 
+                // that's in context when the response is sent.
+                api_evts.emit('SENSORRULE', ruleid, readResp, res);
+            } else {
+                // POST and GET only!
+                res.writeHead(405);
+                res.end();
+            }
         }
     };
     return rulesapi;
