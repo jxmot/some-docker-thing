@@ -8,6 +8,8 @@ module.exports = (function(apiev, log)  {
     // the debugging messages will go here
     const consolelog = log;
 
+    const fs = require('fs');
+
     const path = require('path');
     const scriptname = path.basename(__filename);
 
@@ -19,6 +21,19 @@ module.exports = (function(apiev, log)  {
 
     // SMS notification when a rule is triggered
     const notify = require('./notify.js')(log);
+
+    // read saved rules from disk, if they exist
+    try {
+        fs.accessSync(rules.file, fs.constants.F_OK);
+        consolelog(`${scriptname} - reading rules from ${rules.file}`);
+        // the file rule data will overwrite any 
+        // exising rules, intentional
+        rules.sensors = JSON.parse(fs.readFileSync(rules.file, 'utf8'));
+    } catch(err) {
+        if(err.code === 'ENOENT') {
+            consolelog(`${scriptname} - ${rules.file} does not exist`);
+        }
+    }
 
     /*
         Test rules against sensor data
@@ -122,6 +137,11 @@ module.exports = (function(apiev, log)  {
                 rules.sensors[sensrule.id].checks[unit].delta = sensrule.delta;
     
                 consolelog(`${scriptname} - rule completed for ${sensrule.id}`);
+
+                if(rules.file) {
+                    fs.writeFileSync(rules.file, JSON.stringify(rules.sensors), 'utf8');
+                    consolelog(`${scriptname} - all rules written to ${rules.file}`);
+                }
             }
         }
     });

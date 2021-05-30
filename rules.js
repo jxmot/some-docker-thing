@@ -68,6 +68,7 @@
     not trigger the rule.
 */
 module.exports = {
+    file: './rules.json',
     sensors: {
 /* Canned sensor rules, used in dev&debug
 
