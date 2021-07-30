@@ -5,5 +5,5 @@ module.exports = {
     // this port is for the rules API -
     ruleport: '8080',
     // enable/disable console output
-    debug: false
+    debug: true
 };
