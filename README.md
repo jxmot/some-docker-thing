@@ -13,7 +13,7 @@ A node application with the following characteristics:
 * Rules can be create/overwritten via an API.
 * When a rule is sent via the API it and any pre-existing rules are saved to a file. Upon application start-up that file is read.
 
-**NOTE:** Regarding Twilio, you will need your own API key from them to run this application. 
+**NOTE:** Regarding Twilio, you will need your own API key from them to run this application with SMS notifications. 
 
 ## Development Environment
 
@@ -82,9 +82,8 @@ module.exports = {
     phfrom: '',
     // all messages go to one number
     phto: '',
-    // for dev & debug, disables the SMS send
-    nosms: false
-
+    // for dev & debug, 'true' disables sending SMS
+    nosms: true
 };
 ```
 
@@ -196,11 +195,136 @@ I recommend a utility like *Postman*. It makes it extremely easy to send POST AP
 
 The file `data-samples.txt` contains GUID strings and sample JSON data for use in Postman or some other tool.
 
+# Using Visual Studio Code
+
+## Prerequisites
+
+The starting point should be "fresh", if any Docker images were previously built for this application delete them.
+
+The following must be installed:
+
+* Visual Studio Code - latest version
+  * Extensions:
+    * Docker >=1.15.0
+    * Remote-Containers >=0.187.1
+  * `launch.json` - a working example is provided below
+  * `tasks.json` - a working example is provided below
+  
+## Build, Run and Debug
+
+Use these steps (breakpoint usage is demonstrated):
+
+1) The `.vscode` folder should contain `launch.json` and `tasks.json`. Use the examples below.
+2) Open the project folder with Visual Studio Code.
+3) Navigate to "Explorer"(Ctrl+Shift+E) and open `index.js`
+4) Set a breakpoint on the first line of code.
+5) Navigate to "Run & Debug"(Ctrl+Shift+D).
+6) Hit F5("Start Debuging"), the Docker image will be built and execution will stop on the breakpoint.
+
+The "Debug Console"(Ctrl+Shift+Y) will contain any console output from the application. 
+
+## Visual Studio Code JSON Files
+
+Both files should be placed in a folder named `.vscode` in the root of this project.
+
+**`launch.json`**
+
+This is a typical configuration:
+
+```
+{
+    "configurations": [
+        {
+            "name": "Docker Node.js Launch",
+            "type": "docker",
+            "request": "launch",
+            "preLaunchTask": "docker-run: debug",
+            "platform": "node"
+        }
+    ]
+}
+```
+
+**`tasks.json`**
+
+This had to be modified to work properly, the modifcations and described below.
+
+```
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "docker-build",
+			"label": "docker-build",
+			"platform": "node",
+			"dockerBuild": {
+				"dockerfile": "${workspaceFolder}/Dockerfile",
+				"context": "${workspaceFolder}",
+				"pull": true
+			}
+		},
+		{
+			"type": "docker-run",
+			"label": "docker-run: release",
+			"dependsOn": [
+				"docker-build"
+			],
+			"platform": "node"
+		},
+		{
+			"type": "docker-run",
+			"label": "docker-run: debug",
+			"dependsOn": [
+				"docker-build"
+			],
+			"dockerRun": {
+				"env": {
+					"DEBUG": "*",
+					"NODE_ENV": "development"
+				},
+				"ports": [ 
+					{ "containerPort": 8080, "hostPort": 8080 },
+					{ "containerPort": 1234, "hostPort": 1234 } 
+				]
+			},
+			"node": {
+				"inspectMode": "break",
+				"enableDebugging": true
+			}
+		}
+	]
+}
+```
+
+The following was added to `"dockerRun": {}`:
+
+```
+				"ports": [ 
+					{ "containerPort": 8080, "hostPort": 8080 },
+					{ "containerPort": 1234, "hostPort": 1234 } 
+				]
+```
+
+Without it VSCode would pick "random" port numbers.
+
+The following was added to `"node": {}`:
+
+```
+				"inspectMode": "break",
+```
+
+This will cause VSCode to wait for the debugger to attach to the Docker image before running the application.
+
 # Information Resources Used
 
 * <https://www.twilio.com/docs/sms/quickstart/node>
 * <https://www.docker.com/101-tutorial>
 * <https://nodejs.org/en/docs/guides/nodejs-docker-webapp/>
+
+For Visual Studio Code: A number of sources were used, and information from them was combined to create the instructions in this document.
+
+* https://github.com/microsoft/vscode-docker/issues/1765 - This had what I needed to see, the 2nd comment referenced `"dockerRun": { "ports": [ { "containerPort": 8000, "hostPort": 8000 } ], }`.
+* https://code.visualstudio.com/docs/containers/quickstart-node#_debug-in-the-service-container - Provided information about `"inspectMode"`. 
 
 ## Other 
 
