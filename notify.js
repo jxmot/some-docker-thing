@@ -10,9 +10,9 @@ module.exports = (function(log)  {
     };
 
     const cfg = require('./_notifycfg.js');
-    const Twilio = require('twilio');
-    const client = new Twilio(cfg.accountSid, cfg.authToken);
-
+    const Twilio = (!cfg.nosms ? require('twilio') : null);
+    const client = (!cfg.nosms ? new Twilio(cfg.accountSid, cfg.authToken) : null);
+    
     notify.send = function(message) {
         consolelog(`${scriptname} - notifying msg = ${message} size = ${message.length} nosms = ${cfg.nosms}`);
         // for dev & debug SMS can be disabled
