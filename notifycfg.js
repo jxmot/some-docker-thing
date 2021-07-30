@@ -12,6 +12,6 @@ module.exports = {
     phfrom: '',
     // all messages go to one number
     phto: '',
-    // for dev & debug, disables the SMS send
-    nosms: false
+    // for dev & debug, 'true' disables sending SMS
+    nosms: true
 };
